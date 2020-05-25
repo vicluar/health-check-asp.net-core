@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,13 @@ namespace MainAPI.Configuration
 {
     public static class ConfigureHealthChecks
     {
-        public static IServiceCollection AddCustomHealthChecks(this IServiceCollection services)
+        public static IServiceCollection AddCustomHealthChecks(this IServiceCollection services,
+            IConfiguration configuration)
         {
-            services.AddHealthChecks();
+            services.AddHealthChecks()
+                .AddSqlServer(configuration.GetConnectionString("MyDatabase"),
+                    name: "MyDatabase-Check",
+                    tags: new string[] { "MyDatabase" });
 
             return services;
         }
